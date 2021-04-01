@@ -1,0 +1,43 @@
+---
+title: "Parent_Family_Involement"
+author: "Joey Herrera"
+date: "3/25/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, message=FALSE}
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(gamlr)
+library(foreach)
+library(ggplot2)
+library(stargazer)
+
+#Load in NHES parent and family involvement data from 2019
+ppfi = load("/Users/josephherrera/Downloads/pfi_pu_pert.rdata")
+```
+
+# Parent and Family Involvement Predictive Model
+
+Idea: There is a growing literature that explains the vital impact parent involvement has on the success of students in K - 12 education. There is a glaring drop off in family involvement for students of color for a myriad of reasons. Creating a predictive model using the National Center for Education Statistics' dataset on parent and family involvement for people of color could serve as a baseline model when creating predictive models for specific communities and their unique challenges. A predictive model of this magnitude can provide evidence for the implementation of strategic program implementation to facilitate more significant family involement for students of color to create better student performance outcomes.
+
+```{r echo=FALSE}
+#Clean parent and family involvement data
+#Split it into two different groups with people of color in one and white families in the other,
+
+#Data for families of color
+#CWHITE = child's race is white
+#P1WHITE = Parent/ guardian 1 race is white
+#P2WHITE = Parent/guardian 2 race is white
+#F_CWHITE = imputation flag for CWHITE
+#F_P1WHITE = imputation flag Parent/ guardian 1 race is white
+#F_P2WHITE = imputation flag Parent/guardian 2 race is white
+white = c('CWHITE', "P1WHITE", "P2WHITE", "F_CWHITE", "F_P1WHITE", "F_P2WHITE")
+
+pfi_poc = ppfi %>%
+  filter()
+
+```
+
+
