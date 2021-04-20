@@ -86,6 +86,11 @@ The next number – detailed list of child race and ethnicity.
 
 
 
+### Immediate Thoughts
+You were right, the survey is only produced in English and Spanish which leaves out a significant number of communitites of color. I also noticed that the gender variable in binary with no option for other gender identities outside of male or female. 
+
+I think we can outright exclude the homeschooled variables since we are aiming for other schools.
+
 
 
 
