@@ -91,6 +91,38 @@ You were right, the survey is only produced in English and Spanish which leaves 
 
 I think we can outright exclude the homeschooled variables since we are aiming for other schools.
 
+Things on the chopping block:
+home school variables - adds layers of case-by-case complexity that are too much to deal with.
+
+letter grade variable for outcome of interest instead of parents perception
+
+Throw out parents satisfaction with school except for school reaching out 
+- perhaps interact with languages spoken at home!!!!
+
+Potential compression for parent variables 
+
+### Potential Project Structure
+1. The problem we wish to address is low parent and family interaction and it's role in student success. To address this problem we plan on predicting student success using variables from the PFI national survey.
+
+2. Dataset we are using and our reasoning behind cleaning it.
+
+3. Random Forest, variable importance plot, variable dependence plots.
+
+4. Model analysis.
+
+5. Recommendations based for programs to be created in schools based on model anaylsis.
+
+6. Critique and recommendation for the PFI national survey.
+
+7. Conclusion.
+
+### Action steps
+- Hannah is looking into weighting methodology.
+- Joey is looking further into relevant CPA uses.
+
+
+
+
 
 
 
