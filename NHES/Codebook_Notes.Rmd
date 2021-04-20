@@ -1,0 +1,100 @@
+---
+title: "Codebook_Notes"
+author: "Joey Herrera"
+date: "4/20/2021"
+output: pdf_document
+---
+
+Jackknife replicate weights - A replication method known as the jackknife is used to estimate the variance of statistics derived from the full sample. This type of replication involves repeatedly selecting portions of the sample (replicates) and calculating the desired statistic (replicate estimates). The variability among the calculated replicate estimates is then used to obtain the variance of the full-sample estimate.
+
+Seems like we should focus on public schools (Item 2A)
+
+There is observations who are at university/ community college (Item 2G)
+
+I do not think we are focusing on homeschooling so maybe we elimate all of those variables.
+-	After 2G to position 116
+
+117-118 about using extra classes outside of physical instruction.
+
+209-210 Is the school your child(ren) go to assigned by the district?
+211-212 charter school
+
+ITEM 33: magnet school
+ITEM 34: moved to current neighborhood to attend school (may not be relevant)
+
+ITEM 39 talks about how the parents found out about the current school their child is in. Maybe could talk about if that is an effect.
+
+Item 41: been at the same school since the beginning of the yrat.
+Item 42: how many hours a week the child attends school.
+
+Item 44 talks about being enrolled in online courses, which I do not think is relevant.
+-	Maybe im wrong 45 – 49 talk about whether the school or another higher education institution teaches these students, which could influence parents to push their children to take more course for college credit.
+Item 50: does the student enjoy school? Seems. Crucial
+
+Item 51: what lettergrades are made on average
+
+Item 52 and 53 talk about how many times the school has contacted this particular house for various reasons.
+
+Item 54 number of absenet days for student
+
+Item 55 – has student repeated any grades since kindergarden
+
+Item 57 – has the student had a “bad ” punishment
+Item 58 – how well does your student do in school
+
+Item 60-64 has the parent been involved/ communicated with the school and are the parents satisfied with the school.
+
+Item 65 – 71 – feelings about homework
+
+72-74 – sooooo does your kid have experiences outside of school.
+
+74-81 deal with health and potential disabilities.
+
+82-84 what month was student born and other birth information
+
+85 – Is the childe Hispanic?
+
+86 – racial questions
+
+87 – gender identity (needs to add more than just male and female)
+
+88 – where does child live
+
+90 – what language does the child speak at home (might be biased)
+
+91 – english second language class.
+
+92 - 93 – number of people on household based on familial relationship
+
+94 – relation to child
+
+95 – 102 – who lives with guardian and what language do they speak.
+
+103 – 136 – demographic information about parents
+
+137 – income assistance programs
+
+138 – household income
+
+Position 665 – parent education
+
+The next number – detailed list of child race and ethnicity.
+
+669 – internet access
+
+686 – questionnaire only in English and Spanish
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
