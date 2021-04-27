@@ -118,6 +118,21 @@ Potential compression for parent variables
 
 ### Action steps
 - Hannah is looking into weighting methodology.
+
+#### Weighting Methodology:
+- The weights were constrained such that the distribution of the NHES ECPP and PFI estimates matched
+selected population estimates from the 2018 American Community Survey (ACS). Although NHES used
+Current Population Survey (CPS) estimates for control totals in administrations prior to 2012, the ACS
+was used beginning with NHES:2012 because it has a larger sample size than the CPS, allowing for more
+accurate control totals and greater precision in the NHES person-level estimates.
+
+-  Information from the first phase (screening to see if have kids of right age) was used to create the householdlevel weights. The household base weight (HBWj) was calculated first to account for the differential sampling of addresses based on the race/ethnicity stratum of the frame. The household-level base weight was then adjusted for screener nonresponse using the screener noninterview adjustment factor (SNIAFj)
+-  The final household-level weight for household j, HHWj, is given by
+HHWj = HBWj*SNIAFj where HBWj is the household-level base weight for household j.
+
+![image](https://user-images.githubusercontent.com/77801936/116273427-59709880-a747-11eb-9b03-3eae1206c713.png)
+
+
 - Joey is looking further into relevant CPA uses.
 
 
