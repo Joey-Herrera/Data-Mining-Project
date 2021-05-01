@@ -138,6 +138,34 @@ HHWj = HBWj*SNIAFj where HBWj is the household-level base weight for household j
 - Joey is looking further into relevant CPA uses.
 
 
+### 04/27 Meeting:
+
+- Trimmed data alot 
+--remove homeschool, online school, non-sampled kids, weighting and imputation data
+
+-Consider feature engineering for other ppl in the household
+
+- Run random forest on SEGRADES vs all 275 variables
+
+- Variable importance plot to further trim variables
+
+- Should we combine all of the location indicators
+
+
+#### THINGS TO LOOK AT:
+- Impact of out-of-school activities (art, zoo, sports, etc) on grades (outcome)
+- Impact of language, SES, # of parents, parents ed, etc. on kid outcomes
+- Impact of type of school
+
+Desired conclusion--
+- Want to draw some conclusion around how parent involvement/engagement in student's lives impact outcomes
+-- how is this biased
+- Based on assumption of limited access/resources, what is the most impactful to invest in/prioritize for 
+families that are not/cannot be as involved or engage in traditional manner
+- how to distribute financial burden of involvement (after isolating reason for non-involvement)
+- Recommendations for how survey can be more inclusive
+
+
 
 
 
