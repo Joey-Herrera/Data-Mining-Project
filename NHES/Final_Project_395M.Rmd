@@ -1,0 +1,54 @@
+---
+title: "ECO 395M Final Project"
+author: "Hannah Jones & Joey Herrera"
+date: "5/10/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Abstract
+
+Questions trying to answer: 
+- How does family engagement/parent engagement impact student outcomes?
+
+## Introduction
+
+Introduce data, introduce problem, why it is important
+- find lit/article about what has been done to bolster parent enagagement, and how lack of parent engagement affects children generally, not necesarily just through school
+- find lit/article about growing space for ML in education
+- discussion of how using creative ML/data mining can lead to more robust/actionable/empathetic understandings of students, beyond simply looking at grades and attendance-- contextual understanding of kids/kids success/family opportunities to elicit success
+
+## Methods
+
+Use Principle Components Analysis to see how different traits/features group.  Allows us to recommend a collection of actions versus more simple recommendations.
+
+
+
+- PCA 
+- Random forest
+
+(look at clustering too)
+
+## Results 
+
+Interesting things to look at:
+- Individual features (holding all else constant)
+- PCA-- how do things group/cluster
+
+Show:
+
+
+```{r}
+
+
+```
+
+
+## Conclusion
+
+
+## Appendix
+

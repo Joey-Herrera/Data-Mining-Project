@@ -14,6 +14,7 @@ library(rsample)
 library(mosaic)
 library(parallel)
 library(foreach)
+library(ggcorrplot)
 
 load("/Users/hannahjones/Desktop/pfi_pu_pert_rdata")
 ppfi <- pfi_pu_pert
@@ -26,7 +27,7 @@ ppfi <- ppfi[-c(44:70)]
 
 #remove non-sampled children information
 ppfi <- ppfi[-c(276:291)]
- #safe with weighting and imputation flags
+ #save with weighting and imputation flags
 ppfi_withweighting <- ppfi
 
 #remove weighting info
@@ -54,4 +55,16 @@ modelr::rmse(forest1, ppfi_test)
 yhat_test = predict(forest1, ppfi_test)
 plot(yhat_test, ppfi_test$SEGRADES)
 varImpPlot(forest1)
+
+#change all -1 to 0
+ppfi_recode <- lapply(ppfi, as.character)
+ppfi_recode[ppfi_recode == "-1"] <- "0"
+ppfi_recode<- data.frame(ppfi_recode)
+
+pca_ppfi = prcomp(ppfi_recode, rank=2, scale=TRUE)
+
+loadings_ID = pca_ID$rotation
+scores_ID = pca_ID$x
+summary(pca_ID)
+
 
