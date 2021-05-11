@@ -11,15 +11,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Abstract
 
+
 Improving student success via better grades is a focus of every school because better grades give student a higher chance at having a better quality of life. A main factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasis increaing parent and family involvement to facilitate better student scores. This paper seeks to provide schools with equitable program recommendations using data from the NHES's parent and family involvement survey. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.
 
-----
+
 Questions trying to answer: 
 - How does family engagement/parent engagement impact student outcomes?
 
 ## Introduction
 
 Introduce data, introduce problem, why it is important
+
 
 Paragraph draft: Student success, which is measured through standardized test scores and grades, is the universial measuring stick for enhanced opportunity in the United States. One of the most significant indicators in predicting student success is parent and family involvement in a student's life. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To ease the burden and increase family engagment, schools have created programs and evenst, such as school carnivals, dances, and bring your parent to class day. These traditional programs and events seem to work well in improving the family inovlement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity,
 
@@ -48,6 +50,12 @@ Paragraph draft: An efficient way to provide recommendations to schools and poli
 Transition into the rest of the paper
 
 The following sections of this paper will address the empirical methodology, results, and conclusing remarks associated with the research problem. 
+
+=======
+- find lit/article about what has been done to bolster parent enagagement, and how lack of parent engagement affects children generally, not necesarily just through school
+- find lit/article about growing space for ML in education
+- discussion of how using creative ML/data mining can lead to more robust/actionable/empathetic understandings of students, beyond simply looking at grades and attendance-- contextual understanding of kids/kids success/family opportunities to elicit success
+
 
 ## Methods
 
@@ -79,6 +87,7 @@ Show:
 
 
 ## Appendix
+
 
 ## Bibliography
 
