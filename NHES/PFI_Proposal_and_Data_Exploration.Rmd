@@ -15,7 +15,7 @@ library(ggplot2)
 library(stargazer)
 
 #Load in NHES parent and family involvement data from 2019
-ppfi = load("/Users/josephherrera/Downloads/pfi_pu_pert.rdata")
+ppfi = load("/Users/josephherrera/Documents/github/Data-Mining_Project/NHES/pfi_pu_pert.rdata")
 ```
 
 # Parent and Family Involvement Predictive Model
@@ -27,6 +27,7 @@ Idea: There is a growing literature that explains the vital impact parent involv
 #Split it into two different groups with people of color in one and white families in the other,
 
 #Data for families of color
+#filter out the variable containing the WHITE in them
 #CWHITE = child's race is white
 #P1WHITE = Parent/ guardian 1 race is white
 #P2WHITE = Parent/guardian 2 race is white
