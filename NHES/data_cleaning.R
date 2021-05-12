@@ -15,12 +15,9 @@ library(mosaic)
 library(parallel)
 library(foreach)
 library(ggcorrplot)
+library(utils)
 
-
-ppfi_r<-load("/Users/hannahjones/Desktop/pfi_pu_pert_rdata")
-write.csv(ppfi_r, file="ppfi.csv")
-
-  
+load("/Users/hannahjones/Desktop/pfi_pu_pert_rdata")
 
 ppfi <- pfi_pu_pert
 
@@ -45,6 +42,7 @@ ppfi <- ppfi[-c(276:615)]
 ppfi_trimmed<- ppfi %>%
   filter(SEGRADES != 5)
 
+write.csv(ppfi_trimmed, "/Users/hannahjones/Documents/GitHub/Data-Mining-Project/NHES/ppfi_trimmed.csv")
 
 #columns 87-91? parent's satisfaction with school
 
