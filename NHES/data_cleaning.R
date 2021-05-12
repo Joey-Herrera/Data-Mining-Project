@@ -117,5 +117,11 @@ colnames(ppfi_recode)[tail(o2,3)]
 
 ##FOR SEGRADES-- higher number implies worse grade
 
+##INTERESTING GRAPHS TO PROVE POINTS
+
+#PARENT RACE VS INVOLVEMENT -- FEATURE ENGINEERING for involvement?
+
+
+
 
 
