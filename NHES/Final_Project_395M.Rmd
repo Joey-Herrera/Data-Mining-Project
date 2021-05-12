@@ -11,11 +11,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Abstract
 
+<<<<<<< HEAD
 
 Improving student success via better grades is a focus of every school because better grades give student a higher chance at having a better quality of life. One factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasize increasing parent and family involvement to facilitate better student outcomes. This paper seeks to provide schools with equitable program recommendations using data from the NHES's parent and family involvement survey. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.
 
 - Section on findings
 
+=======
+Improving student success via better grades is a focus of every school because better grades give student a higher chance at having a better quality of life. A main factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasis increaing parent and family involvement to facilitate better student scores. This paper seeks to provide schools with equitable program recommendations using data from the NHES's parent and family involvement survey. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.
+
+----
+>>>>>>> 983bb16cfd097ca4904b9fd5ffaa08e7e76c9513
 Questions trying to answer: 
 - How does family engagement/parent engagement impact student outcomes?
 
@@ -23,8 +29,12 @@ Questions trying to answer:
 
 Introduce data, introduce problem, why it is important
 
+<<<<<<< HEAD
 
 Paragraph draft: Student success, which is measured through standardized test scores and grades, is the universal measuring stick for enhanced opportunity in the United States. One of the most significant indicators in predicting student success is parent and family involvement in a student's life. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To ease the burden and increase family engagement, schools have created programs and events, such as school carnivals, dances, and bring your parent to class day. These traditional programs and events seem to work well in improving the family involvement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity,
+=======
+Paragraph draft: Student success, which is measured through standardized test scores and grades, is the universial measuring stick for enhanced opportunity in the United States. One of the most significant indicators in predicting student success is parent and family involvement in a student's life. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To ease the burden and increase family engagment, schools have created programs and evenst, such as school carnivals, dances, and bring your parent to class day. These traditional programs and events seem to work well in improving the family inovlement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity,
+>>>>>>> 983bb16cfd097ca4904b9fd5ffaa08e7e76c9513
 
 Creating an equitable array of programs to increase parent and family involvement for families of different races, ethnicities, and socioeconomic statuses is a growing issue. In response, the National Household Education Surveys (NHES) program created a national survey with several hundred questions focusing on different aspects of parent and family engagement, This survey is sent to households across the United States, where parents have the opportunity to fill it out and return their responses. The NHES typically receives around 50 million survey responses each time the survey is sent out. 
 
@@ -52,13 +62,14 @@ Transition into the rest of the paper
 
 The following sections of this paper will address the empirical methodology, results, and concluding remarks associated with the research problem. 
 
-=======
-- find lit/article about what has been done to bolster parent enagagement, and how lack of parent engagement affects children generally, not necesarily just through school
-- find lit/article about growing space for ML in education
-- discussion of how using creative ML/data mining can lead to more robust/actionable/empathetic understandings of students, beyond simply looking at grades and attendance-- contextual understanding of kids/kids success/family opportunities to elicit success
-
-
+----
 ## Methods
+
+Data Methodology Paragraph Draft: As mentioned in the prior section, the data used to evaluate student grades comes from a sample of the NHES's 2019 parent and family involvement survey. The data extract includes approximately 17,000 observations and over 800 different features. Each observation is associate with an individual survey response that has been given a unique identifier using a mix of numbers and letters to avoid providing researchers with sensitive information. Each feature corresponds to either a question on the ppfi survey or an additional variable added for NHES's weighting purposes. Every question on the survey allows respondents to bubble in answers. Thus, each corresponding feature is a factor variable, and every answer is represented as a a unique number within the question/ feature.
+
+In order to find the optimal number of principal components and fit a random forest model to the data, the data must be cleaned and morphed into a format that PCA and random forest functions accept. The first step of the cleaning process involves filtering out any variables that are irrelevant the research problem. In this case, variables regarding home schooling and virtual learning. This project focuses specifically on recommendations of schools (either public, magnet, or charter) and their in-person classes. Next, all observations containing a "-1" were recoded. If an observation included a "-1" for an answer to a question, then they were deemed by the NHES to have a valid reason for skipping the question. These observations were recoded to "0" for simplicity. It is important to note that the NHES serves as a filter for potentially corrupt data because they censor sensitive data and do not include incorrectly filled in survey responses in their data. For instance, a family’s student cannot be in two different grades at the same time. Observation such as the one described above were removed from the data before the sample was extracted.
+
+
 
 Use Principle Components Analysis to see how different traits/features group.  Allows us to recommend a collection of actions versus more simple recommendations.
 
@@ -88,7 +99,6 @@ Show:
 
 
 ## Appendix
-
 
 ## Bibliography
 
