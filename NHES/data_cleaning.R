@@ -16,7 +16,12 @@ library(parallel)
 library(foreach)
 library(ggcorrplot)
 
-load("/Users/hannahjones/Desktop/pfi_pu_pert_rdata")
+
+ppfi_r<-load("/Users/hannahjones/Desktop/pfi_pu_pert_rdata")
+write.csv(ppfi_r, file="ppfi.csv")
+
+  
+
 ppfi <- pfi_pu_pert
 
 #remove homeschool data-- only look at in-person school observations
@@ -37,7 +42,7 @@ ppfi <- ppfi[-c(276:358)]
 ppfi <- ppfi[-c(276:615)]
 
 #cut data for schools dont give grades (SEGRADES == 5)
-ppfi<- ppfi %>%
+ppfi_trimmed<- ppfi %>%
   filter(SEGRADES != 5)
 
 
