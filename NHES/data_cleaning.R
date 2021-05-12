@@ -15,8 +15,10 @@ library(mosaic)
 library(parallel)
 library(foreach)
 library(ggcorrplot)
+library(utils)
 
 load("/Users/hannahjones/Desktop/pfi_pu_pert_rdata")
+
 ppfi <- pfi_pu_pert
 
 #remove homeschool data-- only look at in-person school observations
@@ -37,9 +39,10 @@ ppfi <- ppfi[-c(276:358)]
 ppfi <- ppfi[-c(276:615)]
 
 #cut data for schools dont give grades (SEGRADES == 5)
-ppfi<- ppfi %>%
+ppfi_trimmed<- ppfi %>%
   filter(SEGRADES != 5)
 
+write.csv(ppfi_trimmed, "/Users/hannahjones/Documents/GitHub/Data-Mining-Project/NHES/ppfi_trimmed.csv")
 
 #columns 87-91? parent's satisfaction with school
 
@@ -116,6 +119,12 @@ colnames(ppfi_recode)[head(o2,3)]
 colnames(ppfi_recode)[tail(o2,3)]
 
 ##FOR SEGRADES-- higher number implies worse grade
+
+##INTERESTING GRAPHS TO PROVE POINTS
+
+#PARENT RACE VS INVOLVEMENT -- FEATURE ENGINEERING for involvement?
+
+
 
 
 
