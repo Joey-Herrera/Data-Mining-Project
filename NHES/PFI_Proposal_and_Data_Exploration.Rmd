@@ -15,7 +15,10 @@ library(ggplot2)
 library(stargazer)
 
 #Load in NHES parent and family involvement data from 2019
-ppfi = load("/Users/josephherrera/Documents/github/Data-Mining_Project/NHES/pfi_pu_pert.rdata")
+ppfi = load("/Users/josephherrera/Documents/github/Data-Mining-Project/NHES/pfi_pu_pert.rdata")
+
+write.csv("/Users/josephherrera/Documents/github/Data-Mining-Project/NHES/pfi_pu_pert.rdata",
+  file="pfi_pu_pert.csv")
 ```
 
 # Parent and Family Involvement Predictive Model
