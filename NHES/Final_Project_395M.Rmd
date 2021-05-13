@@ -1,8 +1,12 @@
 ---
 title: "ECO 395M Final Project"
 author: "Hannah Jones & Joey Herrera"
+header-includes:
+   - \usepackage{setspace}\doublespacing
 date: "5/10/2021"
 output: pdf_document
+fontsize: 12pt
+sansfont: Times New Roman
 ---
 
 ```{r setup, include=FALSE}
@@ -260,6 +264,7 @@ Given the importance of family involvement in student success as asserted by pre
 
 An efficient way to provide recommendations to schools and policymakers is through the involvement of machine learning techniques. These data science skills have the power to delineate trends from large data sets, such as data revolving around the number of students in a school, in an interpretable manner. Besides predicting student success, there are a variety of places that machine learning can enhance the education sector. For instance, creating adaptive learning for people with different learning styles, improving efficiency in the learning environment, and assessment evaluation are just a few ways machine learning can postivly impact the education sector (Ryan, 2020).
 
+\newpage 
 ## References
 
 Auerbach, Susan. “Visioning Parent Engagement in Urban Schools.” Journal of School Leadership, vol. 17, no. 6, Nov. 2007, pp. 699–734, doi:10.1177/105268460701700602.
