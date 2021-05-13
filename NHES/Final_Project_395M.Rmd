@@ -6,22 +6,84 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(dplyr)
+library(tidyverse)
+library(tidyr)
+library(gamlr)
+library(foreach)
+library(ggplot2)
+library(stargazer)
+library(randomForest)
+library(caret)
+library(estimatr)
+library(lubridate)
+library(modelr)
+library(rsample)
+library(mosaic)
+library(parallel)
+library(foreach)
+library(ggcorrplot)
+library(utils)
+library(fpc)
+
+
+ppfi_trimmed <- read.csv('https://raw.githubusercontent.com/Joey-Herrera/Data-Mining-Project/main/NHES/ppfi_trimmed.csv')
+
+#remove skips for student grades 
+ppfi_recode <- ppfi_trimmed %>%
+  filter(SEGRADES != -1)
+ppfi_recode[ppfi_recode<0]<- 0
+ppfi_recode<- lapply(ppfi_recode, as.numeric)
+ppfi_recode<- data.frame(ppfi_recode)
+
+
+#feature engineering
+
+#hw involvement-- someone checks about or helps with homework
+#creative opportunities if read to child, do crafts, go to zoo, plays, etc-- engaging with child in non-school creative pursuits
+#family time talking about responsibilities, family history, having dinner together more than 3 times
+#number of siblings combined, number of relatives in house, number non-relatives in house
+
+ppfi_feateng<- ppfi_recode %>%
+  mutate(hw_involve = ifelse(FHCHECKX > 3 | FHHELP > 1, 1,0), 
+         create_op = ifelse(FOSTORY2X==1 | FOCRAFTS == 1 | FOGAMES == 1 | FOBUILDX == 1 |FOSPORT == 1, 1, 0),
+         fam_time = ifelse(FORESPON==1 | FOHISTX == 1 | FODINNERX > 3, 1, 0),
+         cultural_exp = ifelse(FOLIBRAYX==1|FOBOOKSTX==1|FOCONCRTX==1|FOMUSEUMX==1|FOZOOX==1|FOGROUPX==1|FOSPRTEVX==1, 1, 0),
+         parent_involved_school = ifelse(FSSPORTX==1|FSVOL==1|FSMTNG==1|FSPTMTNG==1|FSATCNFN==1|FSFUNDRS==1|FSCOMMTE==1|FSCOUNSLR==1, 1, 0 ),
+         gen_sch_comm = ifelse(FSNOTESX == 1|FSMEMO==1|FSPHONCHX==1, 1, 0),
+         num_siblings = HHBROSX + HHSISSX,
+         num_ext_fam = HHAUNTSX+HHUNCLSX+HHGMASX+HHGPASX+HHCSNSX+HHORELSX,
+         num_nonrelatives = HHPRTNRSX+HHONRELSX,
+         english_speakinghh = ifelse(HHENGLISH==1, 1, 0), 
+         spanish_speakinghh = ifelse(HHSPANISH==1, 1,0),
+         otherlang_speakinghh = ifelse(HHFRENCH == 1| HHCHINESE == 1 | HHOTHLANG==1,1,0),
+         parents_together = ifelse(P1MRSTA == 1, 1, 0),
+         parent_lang_english = ifelse(P1SPEAK == 1 | P1SPEAK == 3 | P1SPEAK == 5, 1,0), 
+         P1HRSWK_bins = ifelse(P1HRSWK == 0, 0, 
+                               ifelse(P1HRSWK>0 & P1HRSWK<=20, 1, 
+                               ifelse(P1HRSWK>20 & P1HRSWK<=40, 2,
+                                      ifelse(P1HRSWK>40, 3,0)))),
+         pub_ed = ifelse(EDCPUB == 1, 1, 0))
+         
+
+
+ppfi_feateng <- select(ppfi_feateng, -c(FHCHECKX, FHHELP, FOSTORY2X, FOCRAFTS, FOGAMES, FOBUILDX, FOSPORT, FORESPON, 
+                                       FOHISTX, FODINNERX, FOLIBRAYX, FOBOOKSTX, FOCONCRTX, FOMUSEUMX, FOZOOX, FOGROUPX, 
+                                       FOSPRTEVX, HHBROSX, HHSISSX, HHAUNTSX, HHUNCLSX, HHGMASX, HHGPASX, HHCSNSX, HHORELSX,
+                                       HHPRTNRSX, HHONRELSX, HHENGLISH, HHSPANISH, HHFRENCH, HHCHINESE, HHOTHLANG, P1FRLNG, P1MRSTA,
+                                       P1SPEAK, P1AGEMV, FSSPORTX, FSVOL,FSMTNG, FSPTMTNG, FSATCNFN,FSFUNDRS, FSCOMMTE,FSCOUNSLR,
+                                       FSNOTESX, FSMEMO, FSPHONCHX, P1HRSWK, EDCPUB, EDCPRI, EDCHSFL, EDCCAT, EDCREL, EDCINTK12, EDCINTCOL, EDCCOL))
+
 ```
 
 ## Abstract
 
-<<<<<<< HEAD
+Improving student success via better grades is the focus of every school since better grades afford students a higher chance at getting into college, having better job opportunities, and ultimately having the ability to choose the best path for them. One factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasize increasing parent and family involvement to facilitate better student outcomes. This paper seeks to use data from the NHES's parent and family involvement survey to understand which demographic barriers are limiting parent involvement, which sorts of parent involvement have the highest return on investment, and finally, how this information can equip schools to provide equitable programs. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.  We also look at clustering analysis to see how the students in the dataset cluster based on demographics and experiences.
 
-Improving student success via better grades is a focus of every school because better grades give student a higher chance at having a better quality of life. One factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasize increasing parent and family involvement to facilitate better student outcomes. This paper seeks to provide schools with equitable program recommendations using data from the NHES's parent and family involvement survey. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.
 
-- Section on findings
+Using principle components analysis to run a random forest, we are able to build a model that predicts student scores with about 70% accuracy.  We take a deeper look at the highly impactful principle components to understand which variables are highly predictive regarding student grades.  We find that 
 
-=======
-Improving student success via better grades is a focus of every school because better grades give student a higher chance at having a better quality of life. A main factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasis increaing parent and family involvement to facilitate better student scores. This paper seeks to provide schools with equitable program recommendations using data from the NHES's parent and family involvement survey. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.
-
-----
->>>>>>> 983bb16cfd097ca4904b9fd5ffaa08e7e76c9513
 Questions trying to answer: 
 - How does family engagement/parent engagement impact student outcomes?
 
@@ -29,76 +91,187 @@ Questions trying to answer:
 
 Introduce data, introduce problem, why it is important
 
-<<<<<<< HEAD
+Student success, which is traditionally measured through standardized test scores and class grades, is the universal measuring stick for enhanced opportunity in the United States. One significant indicator in predicting student success is parent and family involvement. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To increase family engagement, schools have created programs and events to get parents and families involved. These programs and events seem to work well in improving the family involvement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity due to work hours, language barriers, or other obligations.
 
-Paragraph draft: Student success, which is measured through standardized test scores and grades, is the universal measuring stick for enhanced opportunity in the United States. One of the most significant indicators in predicting student success is parent and family involvement in a student's life. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To ease the burden and increase family engagement, schools have created programs and events, such as school carnivals, dances, and bring your parent to class day. These traditional programs and events seem to work well in improving the family involvement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity,
-=======
-Paragraph draft: Student success, which is measured through standardized test scores and grades, is the universial measuring stick for enhanced opportunity in the United States. One of the most significant indicators in predicting student success is parent and family involvement in a student's life. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To ease the burden and increase family engagment, schools have created programs and evenst, such as school carnivals, dances, and bring your parent to class day. These traditional programs and events seem to work well in improving the family inovlement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity,
->>>>>>> 983bb16cfd097ca4904b9fd5ffaa08e7e76c9513
+```{r warning = FALSE, error=FALSE, message=FALSE}
+#Graph showing difference in involvement for families that work longer hours and families that do not speak english
 
-Creating an equitable array of programs to increase parent and family involvement for families of different races, ethnicities, and socioeconomic statuses is a growing issue. In response, the National Household Education Surveys (NHES) program created a national survey with several hundred questions focusing on different aspects of parent and family engagement, This survey is sent to households across the United States, where parents have the opportunity to fill it out and return their responses. The NHES typically receives around 50 million survey responses each time the survey is sent out. 
-
-This paper seeks to provide basic program recommendations to schools by evaluating the impact of indicators derived from the NHES parent and family involvement (ppfi) survey on student grades. Using a 1% sample of the full data set, this paper will use a principal component analysis (PCA) and random forest forest technique to illustrate the effects of different pfi question (or features) on student grades.  We hope to see which demographic characteristics are highly predictive in success or lack of success, and how this information can be used to target students at risk of falling behind.
-
-----
-- find lit/article about what has been done to bolster parent enagagement, and how lack of parent engagement affects children generally, not necesarily just through school ---> Visioning Parent Engagement in Urban Schools, https://journals.sagepub.com/doi/pdf/10.1177/105268460701700602
-      - Parents, in particular, parents of color support their children in ways that go undetected by schools.
-      - Parents—especially, low-income and minority parents—are more likely to be involved in education when schools invite their participation, provide multiple entry points for involvement, value their perspectives, and reach out in culturally appropriate ways.
-      - Researchers have noted the ways in which schools marginalize parents of color and low-income parents, and they have pointed to the limitations of traditional conceptions of parent involvement, geared to the school’s agenda.
-      
-Paragraph draft: Given the importance of family involvement in student success, schools have put resources into creating programs that address the specific needs based on the demographic and socioeconomic information of student families. In particular, low-income and minority parents are less likely to be involved with their students' education in a traditional sense. Various structural factors including working multiple jobs or obstructive job hours. To provide these demmographics with alternate opportunities schools have provided  multiple opportunities for invovement, value different perspectives, and reach out to families in culturally appropriate ways (Auerbach, 2007). Schools must continue to adapt to their individual demographics because traditional concepts of family involvment limit the opportunity for low-income and minority-families to be involved. Thus, those students are likely to have less academic success than their counterparts.
----- 
-
-- find lit/article about growing space for ML in education ---> The Importance of Machine Learning in the Education Sector, https://www.newgenapps.com/blog/the-importance-of-machine-learning-in-the-education-sector/#:~:text=Improving%20the%20Efficiency%20of%20Both,manage%20their%20content%20and%20curriculum.&text=Also%2C%20Machine%20Learning%20makes%20educators,classroom%20management%2C%20scheduling%2C%20etc.
-
-Paragraph draft: An efficient way to provide recommendations to schools and policymakers is through the involvement of machine learning techniques. These data science skills have the power to delineate trends from large data sets, such as data revolving around the number of students in a school, in an interpretable manner. Besides predicting student success, there are a variety of places that machine learning can enhance the education sector. For instance, creating adaptive learning for people with different learning styles, improving efficiency in the learning environment, and assessment evaluation are just a few ways machine learning can postivly impact the education sector (Ryan, 2020).
-
-----
-- discussion of how using creative ML/data mining can lead to more robust/actionable/empathetic understandings of students, beyond simply looking at grades and attendance-- contextual understanding of kids/kids success/family opportunities to elicit success
+#families who work more-- less time for involvement
 
 
-----
-Transition into the rest of the paper
+workhrs_race<- data.frame(HourBins = c("0", "0-20","20-40","40+"),ppfi_feateng %>%
+  group_by(P1HRSWK_bins, P1WHITE)%>%
+  summarize(avg_grades = mean(SEGRADES),avgparentinvolv = mean(parent_involved_school), 
+            avg_cultural_exp= mean(cultural_exp), avg_fam_time = mean(fam_time), meancreateop = mean(create_op), mean_enjoy = mean(SEENJOY)))
+
+workhrs<- data.frame(HourBins = c("0", "0-20","20-40","40+"),ppfi_feateng %>%
+  group_by(P1HRSWK_bins)%>%
+  summarize(avg_grades = mean(SEGRADES),avgparentinvolv = mean(parent_involved_school), 
+            avg_cultural_exp= mean(cultural_exp), avg_fam_time = mean(fam_time), meancreateop = mean(create_op), mean_enjoy = mean(SEENJOY)))
+workhrs
+```
+Table 1: Hours Parent Work per Week versus Outcomes
+
+```{r}
+ggplot(workhrs_race)+
+  geom_col(aes(x=P1HRSWK_bins, y = avgparentinvolv))+
+  scale_x_discrete(labels="HourBins")+
+  facet_wrap(~P1WHITE)+
+  xlab("Hrs Work/Wk")+
+  ylab("Proportion of Parents Involved")+
+  labs(title = "FIgure 1: Proportion of Parents Involved at School", caption = "Facets: 1=white, 2=non-white; Y-axis: 1 is A's, 2 is B's; x-axis: increasing from 0 as work hrs increase")
+
+ggplot(workhrs_race)+
+  geom_col(aes(x=P1HRSWK_bins, y = avg_grades))+
+  facet_wrap(~P1WHITE)+
+  xlab("Hrs Work/Wk")+
+  ylab("Average Grades")+
+  labs(title = "Figure 2: Average Grades by Race and Parent Hours of Work", caption = "Facets: 1=white, 2=non-white; Y-axis: 1 is A's, 2 is B's; x-axis: increasing from 0 as work hrs increase")
+
+non_english<- data.frame(Language = c("Other non-english", "English"),ppfi_feateng %>%
+  group_by(english_speakinghh)%>%
+  summarize(avg_grades = mean(SEGRADES),avgparentinvolv = mean(parent_involved_school), 
+            avg_cultural_exp= mean(cultural_exp), avg_fam_time = mean(fam_time), meancreateop = mean(create_op), mean_enjoy = mean(SEENJOY)))
+non_english
+
+```
+Table 2: Household Language versus Outcomes
+
+
+The Tables 1 and 2 above show a summary of grades, proportion of parents involved, proportion of students engaging in cultural experiences (such as plays, zoos, library visits), proportion of students engaging in consistent family time, and average student enjoyment of school.  Please note that the grade coding is such that 1 is mostly A's, 2 is mostly B's, 3 is mostly C's and 4 is mostly D's.  Likewise, student enjoyment is ranked with 1 as most enjoyment and 4 as least enjoyment of school. Figures 1 and 2 show that at each level of parent work hours, white parents tend to be more involved in school activities than non-white parents.  Similarly, grades for students of white parents are better for every level of parent work.  This suggests that there is some sort of breakdown between schools and parents of color when it comes to getting involved and helping students succeed.  The second chart shows the gap in student grades, parent involvement, cultural exposure, creative pursuits and enjoyment between households that are English speaking and households that are not English speaking. This finding emphasizes the gap in experiences afforded to white, English speaking students, and non-white students who do not live in English-speaking households 
+
+Creating an equitable array of programs to increase parent and family involvement for families of different races, ethnicities, and socioeconomic statuses is a growing issue. In response, the National Household Education Surveys (NHES) program created a national survey with several hundred questions focusing on different aspects of parent and family engagement, This survey is sent to households across the United States, and encourages parents fill it out and return their responses. The NHES typically receives around 50 million survey responses each time the survey is sent out. 
+
+This paper seeks to provide basic program recommendations to schools by evaluating the impact of indicators derived from the NHES parent and family involvement (ppfi) survey on student grades. Using a 1% sample of the full data set, this paper will use a principal component analysis (PCA) and random forest forest technique to illustrate the effects of different survey questions (or features) on student grades.  We hope to see which demographic characteristics are highly predictive in success or lack of success, and how this information can be used to target students at risk of falling behind.
 
 The following sections of this paper will address the empirical methodology, results, and concluding remarks associated with the research problem. 
 
-----
+
 ## Methods
 
-Data Methodology Paragraph Draft: As mentioned in the prior section, the data used to evaluate student grades comes from a sample of the NHES's 2019 parent and family involvement survey. The data extract includes approximately 17,000 observations and over 800 different features. Each observation is associate with an individual survey response that has been given a unique identifier using a mix of numbers and letters to avoid providing researchers with sensitive information. Each feature corresponds to either a question on the ppfi survey or an additional variable added for NHES's weighting purposes. Every question on the survey allows respondents to bubble in answers. Thus, each corresponding feature is a factor variable, and every answer is represented as a a unique number within the question/ feature.
+As mentioned in the prior section, the data used to evaluate student grades comes from a sample of the NHES's 2019 parent and family involvement survey. The data extract includes approximately 17,000 observations and over 800 different features. Each observation is associate with an individual survey response that has been given a unique identifier using a mix of numbers and letters to avoid providing researchers with sensitive information. Each feature corresponds to either a question on the ppfi survey or an additional variable added for NHES's weighting purposes. Every question on the survey allows respondents to bubble in answers. Thus, each corresponding feature is a factor variable, and every answer is represented as a a unique number within the question/ feature.
 
-In order to find the optimal number of principal components and fit a random forest model to the data, the data must be cleaned and morphed into a format that PCA and random forest functions accept. The first step of the cleaning process involves filtering out any variables that are irrelevant the research problem. In this case, variables regarding home schooling and virtual learning. This project focuses specifically on recommendations of schools (either public, magnet, or charter) and their in-person classes. Next, all observations containing a "-1" were recoded. If an observation included a "-1" for an answer to a question, then they were deemed by the NHES to have a valid reason for skipping the question. These observations were recoded to "0" for simplicity. It is important to note that the NHES serves as a filter for potentially corrupt data because they censor sensitive data and do not include incorrectly filled in survey responses in their data. For instance, a family’s student cannot be in two different grades at the same time. Observation such as the one described above were removed from the data before the sample was extracted.
+In order to find the optimal number of principal components and fit a random forest model to the data, the data must be cleaned and morphed into a format that PCA and random forest functions accept. The first step of the cleaning process involves filtering out any variables that are irrelevant the research problem. In this case, variables regarding home schooling and virtual learning. This project focuses specifically on recommendations of schools (either public, magnet, or charter) and their in-person classes. Next, all observations containing a "-1" were recoded. If an observation included a "-1" for an answer to a question, then they were deemed by the NHES to have a valid reason for skipping the question. These observations were recoded to "0" for simplicity. Additionally, we engineered features to compress like-variables into one overall variable.  For example, instead of having separate variables for brothers and sisters, we created one variable for siblings. We also combined like variables around extracurricular activity involvement, parent involvement in school activities, and other cultural activities.  It is important to note that the NHES serves as a filter for potentially corrupt data because they censor sensitive data and do not include incorrectly filled in survey responses in their data. For instance, a family’s student cannot be in two different grades at the same time. Observation such as the one described above were removed from the data before the sample was extracted.
 
-
-
-Use Principle Components Analysis to see how different traits/features group.  Allows us to recommend a collection of actions versus more simple recommendations.
-
-
-
-- PCA 
-- Random forest
-
-(look at clustering too)
+We run a principle component analysis to simplify our dataset of ~230 variables into a more manageable set of explanatory variables that we can study more closely.  To run the PCA, we remove our eventual outcome variable, grades, in order to make this exercise unsupervised. We then add the grades back in to the data and use the principle components in building a random forest model on a training set of data, to then test on a test set.  This model allows us to predict student outcomes, and analyze which principle components are most influential for prediction.  Taking a closer look at the principle components gives us insight into the groups of variables that are highly predictive for student outcomes.  This will enable us to test our hypothesis of parent involvement's importance in student success, and the various barriers to student success.
 
 ## Results 
 
-Interesting things to look at:
-- Individual features (holding all else constant)
-- PCA-- how do things group/cluster
-
-Show:
+Running the principle components analysis on the dataset yields a total of 235 principle components.  Using 60 principle components explains ~75% of the variance in the data, so we will move forward building the random forest model with the 60 principle components predicting the student grades.
 
 
 ```{r}
 
+ppfi_pca_data <- select(ppfi_feateng, -SEGRADES)
+ppfi_pca_data = scale(ppfi_pca_data , center=TRUE, scale=TRUE)
+mu = attr(ppfi_pca_data,"scaled:center") # mean
+sigma = attr(ppfi_pca_data,"scaled:scale")
 
+pca_ppfi = prcomp(ppfi_pca_data, scale=TRUE)
+
+loadings_ppfi = pca_ppfi$rotation
+scores_ppfi = pca_ppfi$x
+#summary(pca_ppfi)
 ```
 
 
+
+
+```{r}
+ppfi_combined = data.frame(ppfi_feateng$SEGRADES, pca_ppfi$x[,1:60])
+
+ppfi_split = initial_split(ppfi_combined)
+n = nrow(ppfi_combined)
+n_train = floor(0.8*n)
+n_test = n - n_train
+train_cases = sample.int(n, size=n_train, replace=FALSE)
+ppfi_train = training(ppfi_split)
+ppfi_test = testing(ppfi_split)
+
+
+# run a random forest using PCA variables 
+
+ppfi_train$ppfi_feateng.SEGRADES = factor(ppfi_train$ppfi_feateng.SEGRADES) 
+
+grades_forest = randomForest(ppfi_feateng.SEGRADES ~ .,
+                             data = ppfi_train, importance = TRUE)
+
+yhat = predict(grades_forest, ppfi_test)
+comp_table<-as.data.frame(table(yhat,as.factor(ppfi_test$ppfi_feateng.SEGRADES)))
+predicted<-yhat
+actual<-as.factor(ppfi_test$ppfi_feateng.SEGRADES)
+comp_table<-as.data.frame(cbind(actual,predicted))
+comp_table$flag<-ifelse(comp_table$actual==comp_table$predicted,1,0)
+tot_correct<- sum(comp_table$flag)
+percent_correct<- sum(comp_table$flag)*100/nrow(comp_table)
+
+accuracy_df<- data.frame(Accuracy = c("Total Predicted Correct", "Percent Correct"), Outcome = c(tot_correct, percent_correct))
+accuracy_df
+```
+Table 3: Accuracy of Randome Forest Model
+
+The numbers above reflect the total predicted correctly out of the test set, and the percent correct.  Below is the variable importance plot for the principle components.  I have only shown the first 10 principle components.
+
+```{r}
+#look at important PC
+varImpPlot(grades_forest, n.var = 10)
+```
+Figure 3: Variable Importance Plot for Random Forest
+
+Principle component 1 is by and large the most impactful component, followed by PC 5, 4, 3, and 18.  We will look at the implications of this in the conclusion.
+
 ## Conclusion
 
+The prediction model discussed above runs at about 70% accuracy.  The lack of accuracy may be due to students who are atypical based on their demographics and parent involvement.  The survey is extensive but may also suffer from bias as all information is self-reported.  Taking a closer look at the top principle components  against student grades in Table 4 gives an idea of how the principle components relate to grades.  PC1 is highly correlated with students making C's and D's and PC$ is highly negative for C's and D's. All other components are weakly correlated with students making mostly A's. Because of the highly positive value for PC1 for C's and D's, and the highly negative value for PC4 for C's and D's, we will look more closely at these components.
+
+```{r}
+pc_grades <- ppfi_combined %>%
+  group_by(ppfi_feateng.SEGRADES)%>%
+  summarise(avgpc1 = mean(PC1), avgpc5 = mean(PC5), avgpc4 = mean(PC4), avgpc3 = mean(PC3), avgpc18 = mean(PC18))
+
+pc_grades_df <-  data.frame(Grades = c("Mostly A's","Mostly B's","Mostly C's","Mostly D's"), pc_grades)
+pc_grades_df
+```
+Table 4: Top 5 principle components and student grades
+
+
+Looking more closely at the principle components, we can see what are the primary components of the principle components. 
+```{r}
+o1 = order(loadings_ppfi[,1], decreasing=TRUE)
+o5 = order(loadings_ppfi[,5], decreasing=TRUE)
+o4 = order(loadings_ppfi[,4], decreasing=TRUE)
+o3 = order(loadings_ppfi[,3], decreasing=TRUE)
+o18 = order(loadings_ppfi[,18], decreasing=TRUE)
+
+headPC1<-colnames(ppfi_pca_data)[head(o1,5)]
+headPC5<-colnames(ppfi_pca_data)[head(o5,5)]
+headPC4<-colnames(ppfi_pca_data)[head(o4,5)]
+headPC3<-colnames(ppfi_pca_data)[head(o3,5)]
+headPC18<-colnames(ppfi_pca_data)[head(o18,5)]
+
+pc_heads<- data.frame( headPC1, headPC5, headPC4, headPC3, headPC18)
+pc_heads
+```
+The head variables in PC1 revolve around single-parent vs two-parent home structures.  This is an important finding as it relates to providing extra support for students who are in a single-parent household.  The head variables for PC4 revolve around the parent's choice of student school for quality of staff, student performance, school safety, and available courses.  This suggests that student grades are positively correlated with choosing a school for a positive reason.
+
+Given the importance of family involvement in student success as asserted by previous research and findings within the data, schools have put resources into creating programs that address the specific needs based on the demographic and socioeconomic information of student families. In particular, low-income and minority parents are less likely to be involved with their students' education in a traditional sense. Various structural factors including working multiple jobs or obstructive job hours. To provide these demographics with alternate opportunities schools have provided  multiple opportunities for involvement, value different perspectives, and reach out to families in culturally appropriate ways (Auerbach, 2007). Schools must continue to adapt to their individual demographics because traditional concepts of family involvement limit the opportunity for low-income and minority-families to be involved. Thus, those students are likely to have less academic success than their counterparts.
+
+The principle component 
 
 ## Appendix
+
+Paragraph draft: An efficient way to provide recommendations to schools and policymakers is through the involvement of machine learning techniques. These data science skills have the power to delineate trends from large data sets, such as data revolving around the number of students in a school, in an interpretable manner. Besides predicting student success, there are a variety of places that machine learning can enhance the education sector. For instance, creating adaptive learning for people with different learning styles, improving ef
+
+- find lit/article about growing space for ML in education - The Importance of Machine Learning in the Education Sector, https://www.newgenapps.com/blog/the-importance-of-machine-learning-in-the-education-sector/#:~:text=Improving%20the%20Efficiency%20of%20Both,manage%20their%20content%20and%20curriculum.&text=Also%2C%20Machine%20Learning%20makes%20educators,classroom%20management%2C%20scheduling%2C%20etc.
+
+- discussion of how using creative ML/data mining can lead to more robust/actionable/empathetic understandings of students, beyond simply looking at grades and attendance-- contextual understanding of kids/kids success/family opportunities to elicit success
+
+- find lit/article about what has been done to bolster parent engagement, and how lack of parent engagement affects children generally, not necesarily just through school ---> Visioning Parent Engagement in Urban Schools, https://journals.sagepub.com/doi/pdf/10.1177/105268460701700602
+- Parents, in particular, parents of color support their children in ways that go undetected by schools.
+- Parents—especially, low-income and minority parents—are more likely to be involved in education when schools invite their participation, provide multiple entry points for involvement, value their perspectives, and reach out in culturally appropriate ways.
+- Researchers have noted the ways in which schools marginalize parents of color and low-income parents, and they have pointed to the limitations of traditional conceptions of parent involvement, geared to the school’s agenda.
+
+Proficiency in the learning environment, and assessment evaluation are just a few ways machine learning can postivly impact the education sector (Ryan, 2020).
 
 ## Bibliography
 
