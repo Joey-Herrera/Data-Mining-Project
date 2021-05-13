@@ -64,7 +64,11 @@ ppfi_feateng<- ppfi_recode %>%
                                ifelse(P1HRSWK>0 & P1HRSWK<=20, 1, 
                                ifelse(P1HRSWK>20 & P1HRSWK<=40, 2,
                                       ifelse(P1HRSWK>40, 3,0)))),
-         pub_ed = ifelse(EDCPUB == 1, 1, 0))
+         pub_ed = ifelse(EDCPUB == 1, 1, 0),
+         sus_exp = ifelse(SESUSOUT==1|SESUSPIN==1|SEEXPEL==1,1,0),
+         sing_parent = ifelse(HHPARN19_BRD==2|P2GUARD==2|FAMILY19_BRD>3|P1BFGF==2|FAMILY19X>3,1,0),
+         internet_access = ifelse(INTACC<4|HVINTSPHO==1|HVINTCOM==1|CHLDNT<5|LRNCOMP==1|LRNTAB==1|LRNCELL==1,1,0),
+         school_choice_pos = ifelse(SCCHOICE==1|SPUBCHOIX==1|S1STCHOI==1,1,0))
          
 
 
@@ -73,7 +77,9 @@ ppfi_feateng <- select(ppfi_feateng, -c(FHCHECKX, FHHELP, FOSTORY2X, FOCRAFTS, F
                                        FOSPRTEVX, HHBROSX, HHSISSX, HHAUNTSX, HHUNCLSX, HHGMASX, HHGPASX, HHCSNSX, HHORELSX,
                                        HHPRTNRSX, HHONRELSX, HHENGLISH, HHSPANISH, HHFRENCH, HHCHINESE, HHOTHLANG, P1FRLNG, P1MRSTA,
                                        P1SPEAK, P1AGEMV, FSSPORTX, FSVOL,FSMTNG, FSPTMTNG, FSATCNFN,FSFUNDRS, FSCOMMTE,FSCOUNSLR,
-                                       FSNOTESX, FSMEMO, FSPHONCHX, P1HRSWK, EDCPUB, EDCPRI, EDCHSFL, EDCCAT, EDCREL, EDCINTK12, EDCINTCOL, EDCCOL))
+                                       FSNOTESX, FSMEMO, FSPHONCHX, P1HRSWK, EDCPUB, EDCPRI, EDCHSFL, EDCCAT, EDCREL, EDCINTK12, EDCINTCOL, EDCCOL, SEREPTK, SEREPT1, SEREPT2, SEREPT3, SEREPT4, SEREPT5, SEREPT6, SEREPT7, SEREPT8, SEREPT9, SEREPT10, SEREPT11, SEREPT12, SESUSOUT, SESUSPIN, SEEXPEL, HHPARN19_BRD, P2GUARD, FAMILY19_BRD,P1BFGF,FAMILY19X, INTACC, HVINTSPHO, HVINTCOM, CHLDNT, LRNCOMP, LRNTAB, LRNCELL, SCCHOICE, SPUBCHOIX, S1STCHOI, LOCALE, SCHLSAFETY, SCHLSTFQUALITY, AVAILCOURSE, XTRACURRIC, STUDNTCHAR, STUDNTPERFORM, RELIGSOR, SPECALEDSERVS, SPECALFACILTS, CLSSIZE, SCHLCOST, SCONSIDR))
+
+ppfi_feateng<- select(ppfi_feateng, -c(8:18))
 
 ```
 
@@ -82,14 +88,10 @@ ppfi_feateng <- select(ppfi_feateng, -c(FHCHECKX, FHHELP, FOSTORY2X, FOCRAFTS, F
 Improving student success via better grades is the focus of every school since better grades afford students a higher chance at getting into college, having better job opportunities, and ultimately having the ability to choose the best path for them. One factor associated with good grades is high parent and family involvement in a students academic journey. Thus, many schools emphasize increasing parent and family involvement to facilitate better student outcomes. This paper seeks to use data from the NHES's parent and family involvement survey to understand which demographic barriers are limiting parent involvement, which sorts of parent involvement have the highest return on investment, and finally, how this information can equip schools to provide equitable programs. This data will be evaluated using principal component analysis and fitting a random forest model to extract meaningful summaries of relevant features.  We also look at clustering analysis to see how the students in the dataset cluster based on demographics and experiences.
 
 
-Using principle components analysis to run a random forest, we are able to build a model that predicts student scores with about 70% accuracy.  We take a deeper look at the highly impactful principle components to understand which variables are highly predictive regarding student grades.  We find that 
+Using principle components analysis to run a random forest, we are able to build a model that predicts student scores with about 65% accuracy.  We take a deeper look at the highly impactful principle components to understand which variables are highly predictive regarding student grades.  We find that impactful principle components are highly loaded by parent race variables, student disability, and school communication. 
 
-Questions trying to answer: 
-- How does family engagement/parent engagement impact student outcomes?
 
 ## Introduction
-
-Introduce data, introduce problem, why it is important
 
 Student success, which is traditionally measured through standardized test scores and class grades, is the universal measuring stick for enhanced opportunity in the United States. One significant indicator in predicting student success is parent and family involvement. Since schools only facilitate learning to students throughout the day, a burden is placed on parents and legal guardians to continue cultivating a learning environment outside of school. To increase family engagement, schools have created programs and events to get parents and families involved. These programs and events seem to work well in improving the family involvement for students whose parents work traditional 9-5 jobs. Most families of color and low-income households are not afforded this same opportunity due to work hours, language barriers, or other obligations.
 
@@ -162,7 +164,7 @@ Running the principle components analysis on the dataset yields a total of 235 p
 
 ```{r}
 
-ppfi_pca_data <- select(ppfi_feateng, -SEGRADES)
+ppfi_pca_data <- select(ppfi_feateng, -c(SEGRADES, X, BASMID))
 ppfi_pca_data = scale(ppfi_pca_data , center=TRUE, scale=TRUE)
 mu = attr(ppfi_pca_data,"scaled:center") # mean
 sigma = attr(ppfi_pca_data,"scaled:scale")
@@ -172,12 +174,8 @@ pca_ppfi = prcomp(ppfi_pca_data, scale=TRUE)
 loadings_ppfi = pca_ppfi$rotation
 scores_ppfi = pca_ppfi$x
 #summary(pca_ppfi)
-```
 
 
-
-
-```{r}
 ppfi_combined = data.frame(ppfi_feateng$SEGRADES, pca_ppfi$x[,1:60])
 
 ppfi_split = initial_split(ppfi_combined)
@@ -208,9 +206,9 @@ percent_correct<- sum(comp_table$flag)*100/nrow(comp_table)
 accuracy_df<- data.frame(Accuracy = c("Total Predicted Correct", "Percent Correct"), Outcome = c(tot_correct, percent_correct))
 accuracy_df
 ```
-Table 3: Accuracy of Randome Forest Model
+Table 3: Accuracy of Random Forest Model
 
-The numbers above reflect the total predicted correctly out of the test set, and the percent correct.  Below is the variable importance plot for the principle components.  I have only shown the first 10 principle components.
+Table 3 above reflect the total predicted correctly out of the test set, and the percent correct.  Figure 3 below is the variable importance plot for the principle components.  I have only shown the first 10 principle components.
 
 ```{r}
 #look at important PC
@@ -218,16 +216,16 @@ varImpPlot(grades_forest, n.var = 10)
 ```
 Figure 3: Variable Importance Plot for Random Forest
 
-Principle component 1 is by and large the most impactful component, followed by PC 5, 4, 3, and 18.  We will look at the implications of this in the conclusion.
+Principle component 1 is by and large the most impactful component, followed by PC 3, 37, 21, and 18.  We will look at the implications of this in the conclusion.
 
 ## Conclusion
 
-The prediction model discussed above runs at about 70% accuracy.  The lack of accuracy may be due to students who are atypical based on their demographics and parent involvement.  The survey is extensive but may also suffer from bias as all information is self-reported.  Taking a closer look at the top principle components  against student grades in Table 4 gives an idea of how the principle components relate to grades.  PC1 is highly correlated with students making C's and D's and PC$ is highly negative for C's and D's. All other components are weakly correlated with students making mostly A's. Because of the highly positive value for PC1 for C's and D's, and the highly negative value for PC4 for C's and D's, we will look more closely at these components.
+The prediction model discussed above runs at about 65-70% accuracy.  The lack of accuracy may be due to students who are atypical based on their demographics and parent involvement.  The survey is extensive but may also suffer from bias as all information is self-reported.  Taking a closer look at the top principle components  against student grades in Table 4 gives an idea of how the principle components relate to grades.  PC1 and 3 are highly negatively correlated with students making C's and D's. PC3, PC21 and PC18 all seem to be positively correlated with good grades (A's).  PC37 is slightly negatively correlated with A's.
 
 ```{r}
 pc_grades <- ppfi_combined %>%
   group_by(ppfi_feateng.SEGRADES)%>%
-  summarise(avgpc1 = mean(PC1), avgpc5 = mean(PC5), avgpc4 = mean(PC4), avgpc3 = mean(PC3), avgpc18 = mean(PC18))
+  summarise(avgpc1 = mean(PC1), avgpc3 = mean(PC3), avgpc37 = mean(PC37), avgpc21 = mean(PC21), avgpc18 = mean(PC18))
 
 pc_grades_df <-  data.frame(Grades = c("Mostly A's","Mostly B's","Mostly C's","Mostly D's"), pc_grades)
 pc_grades_df
@@ -238,44 +236,32 @@ Table 4: Top 5 principle components and student grades
 Looking more closely at the principle components, we can see what are the primary components of the principle components. 
 ```{r}
 o1 = order(loadings_ppfi[,1], decreasing=TRUE)
-o5 = order(loadings_ppfi[,5], decreasing=TRUE)
-o4 = order(loadings_ppfi[,4], decreasing=TRUE)
 o3 = order(loadings_ppfi[,3], decreasing=TRUE)
+o37 = order(loadings_ppfi[,37], decreasing=TRUE)
+o21 = order(loadings_ppfi[,21], decreasing=TRUE)
 o18 = order(loadings_ppfi[,18], decreasing=TRUE)
 
 headPC1<-colnames(ppfi_pca_data)[head(o1,5)]
-headPC5<-colnames(ppfi_pca_data)[head(o5,5)]
-headPC4<-colnames(ppfi_pca_data)[head(o4,5)]
 headPC3<-colnames(ppfi_pca_data)[head(o3,5)]
+headPC37<-colnames(ppfi_pca_data)[head(o37,5)]
+headPC21<-colnames(ppfi_pca_data)[head(o21,5)]
 headPC18<-colnames(ppfi_pca_data)[head(o18,5)]
 
-pc_heads<- data.frame( headPC1, headPC5, headPC4, headPC3, headPC18)
+pc_heads<- data.frame( headPC1, headPC3, headPC37, headPC21, headPC18)
 pc_heads
 ```
-The head variables in PC1 revolve around single-parent vs two-parent home structures.  This is an important finding as it relates to providing extra support for students who are in a single-parent household.  The head variables for PC4 revolve around the parent's choice of student school for quality of staff, student performance, school safety, and available courses.  This suggests that student grades are positively correlated with choosing a school for a positive reason.
+Table 5: Head Loadings of Principle Components
 
-Given the importance of family involvement in student success as asserted by previous research and findings within the data, schools have put resources into creating programs that address the specific needs based on the demographic and socioeconomic information of student families. In particular, low-income and minority parents are less likely to be involved with their students' education in a traditional sense. Various structural factors including working multiple jobs or obstructive job hours. To provide these demographics with alternate opportunities schools have provided  multiple opportunities for involvement, value different perspectives, and reach out to families in culturally appropriate ways (Auerbach, 2007). Schools must continue to adapt to their individual demographics because traditional concepts of family involvement limit the opportunity for low-income and minority-families to be involved. Thus, those students are likely to have less academic success than their counterparts.
+An important note about the data in this survey is that apart from the engineered variables, all yes/no questions code a 1 for yes and a 2 for no, instead of the typical 0 for no and 1 for yes.  Therefore, all associations are a bit counter intuitive, since the larger value for many variables implies the absence of the trait.  Taking this into account, Table 5 shows the head variables in PC1 revolve around the second parent's race.  This is an important finding as it relates to providing extra support for students who are in a single-parent household, and extra attention for non-white households.  The head variables for PC3 revolve around students with disabilities. PC37 also involves students with disabilities, as well qualitative work description, internet access, and school choice empowerment.  PC21 involves around parent contact for good student work, time spent doing homework, and the child's sex.  Finally PC18 involves time doing homework, and school communication about coursework, parent roles, and homework help resources.
 
-The principle component 
+These findings suggest a number of interesting possible interventions to help parents help their children.  These variables confirm that non-white households, disabilities, child behavior, and school communication are all predictive in student success.  This finding bolsters the earlier discussion around providing extra support to families who are not white and english speaking.  As shown earlier, these families are likely to be less involved, which may hurt student grades.  The findings around school communication about parent roles, and homework help provides an action step for schools to start bolstering family involvement.  Additionally, schools should provide extra support for families of students with learning disabilities to account for the large impact of these disabilities on student success.  Finally, school communications around student successes may not be causal of further student success, and may just be a product of success, but the findings around school communication and parent involvement suggest this is a helpful practice.
 
-## Appendix
+Given the importance of family involvement in student success as asserted by previous research and findings within the data, schools have put resources into creating programs that address the specific needs based on the demographic and socioeconomic information of student families. In particular, low-income and minority parents are less likely to be involved with their students' education in a traditional sense. Various structural factors including working multiple jobs or obstructive job hours. To provide these demographics with alternate opportunities schools have provided  multiple opportunities for involvement, value different perspectives, and reach out to families in culturally appropriate ways (Auerbach, 2007). Schools must continue to adapt to their individual demographics because traditional concepts of family involvement limit the opportunity for low-income and minority-families to be involved. Thus, those students are likely to have less academic success than their counterparts.  As our findings suggest, race and disabilities are highly impactful on student success and should be greatly considered when schools design programs to involve students and their families in meaningful ways.
 
-Paragraph draft: An efficient way to provide recommendations to schools and policymakers is through the involvement of machine learning techniques. These data science skills have the power to delineate trends from large data sets, such as data revolving around the number of students in a school, in an interpretable manner. Besides predicting student success, there are a variety of places that machine learning can enhance the education sector. For instance, creating adaptive learning for people with different learning styles, improving ef
+An efficient way to provide recommendations to schools and policymakers is through the involvement of machine learning techniques. These data science skills have the power to delineate trends from large data sets, such as data revolving around the number of students in a school, in an interpretable manner. Besides predicting student success, there are a variety of places that machine learning can enhance the education sector. For instance, creating adaptive learning for people with different learning styles, improving efficiency in the learning environment, and assessment evaluation are just a few ways machine learning can postivly impact the education sector (Ryan, 2020).
 
-- find lit/article about growing space for ML in education - The Importance of Machine Learning in the Education Sector, https://www.newgenapps.com/blog/the-importance-of-machine-learning-in-the-education-sector/#:~:text=Improving%20the%20Efficiency%20of%20Both,manage%20their%20content%20and%20curriculum.&text=Also%2C%20Machine%20Learning%20makes%20educators,classroom%20management%2C%20scheduling%2C%20etc.
+## References
 
-- discussion of how using creative ML/data mining can lead to more robust/actionable/empathetic understandings of students, beyond simply looking at grades and attendance-- contextual understanding of kids/kids success/family opportunities to elicit success
+Auerbach, Susan. “Visioning Parent Engagement in Urban Schools.” Journal of School Leadership, vol. 17, no. 6, Nov. 2007, pp. 699–734, doi:10.1177/105268460701700602.
 
-- find lit/article about what has been done to bolster parent engagement, and how lack of parent engagement affects children generally, not necesarily just through school ---> Visioning Parent Engagement in Urban Schools, https://journals.sagepub.com/doi/pdf/10.1177/105268460701700602
-- Parents, in particular, parents of color support their children in ways that go undetected by schools.
-- Parents—especially, low-income and minority parents—are more likely to be involved in education when schools invite their participation, provide multiple entry points for involvement, value their perspectives, and reach out in culturally appropriate ways.
-- Researchers have noted the ways in which schools marginalize parents of color and low-income parents, and they have pointed to the limitations of traditional conceptions of parent involvement, geared to the school’s agenda.
-
-Proficiency in the learning environment, and assessment evaluation are just a few ways machine learning can postivly impact the education sector (Ryan, 2020).
-
-## Bibliography
-
-  Auerbach, Susan. “Visioning Parent Engagement in Urban Schools.” Journal of School Leadership, vol. 17, no. 6, Nov. 2007, pp. 699–734, doi:10.1177/105268460701700602.
-
-Ryan, Jacob. “The Importance of Machine Learning in the Education Sector.” NewGenApps, 20 Dec. 2020, www.newgenapps.com/blog/the-importance-of-machine-learning-in-the-education-sector/#:~:text=Improving%20the%20Efficiency%20of%20Both,manage%20their%20content%20and%20curriculum.&amp;text=Also%2C%20Machine%20Learning%20makes%20educators,classroom%20management%2C%20scheduling%2C%20etc. 
-
+Ryan, Jacob. “The Importance of Machine Learning in the Education Sector.” NewGenApps, 20 Dec. 2020, www.newgenapps.com/blog/the-importance-of-machine-learning-in-the-education-sector/
